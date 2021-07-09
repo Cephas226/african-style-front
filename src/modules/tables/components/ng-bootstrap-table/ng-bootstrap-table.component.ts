@@ -23,7 +23,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     styleUrls: ['ng-bootstrap-table.component.scss'],
 })
 export class NgBootstrapTableComponent implements OnInit {
-    @Input() pageSize = 4;
+    @Input() pageSize =20;
 
     product$!: Observable<Product[]>;
     total$!: Observable<number>;
@@ -147,8 +147,7 @@ export class NgBootstrapTableComponent implements OnInit {
 
     closeMe() {
         this.modalService.dismissAll('Cross Click')
-        this.selectedItems=[]
-        this.files=undefined
+        this.files = [];
     }
 
     deleteProduct() {
