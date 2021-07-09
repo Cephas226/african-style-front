@@ -65,7 +65,7 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross Click')">
+        <button type="button" class="close" aria-label="Close" (click)="closeMe()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -95,7 +95,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save Click')">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeMe()">Save</button>
     </div>
 
 </ng-template>
