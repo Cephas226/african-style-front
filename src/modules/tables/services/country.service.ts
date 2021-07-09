@@ -48,7 +48,7 @@ export class CountryService {
     private _search$ = new Subject<void>();
     private _product$ = new BehaviorSubject<Product[]>([]);
     private _total$ = new BehaviorSubject<number>(0);
-    private baseUrl = 'http://localhost:8080';
+    private baseUrl = 'https://myafricanstyle.herokuapp.com/';
     private _state: State = {
         page: 1,
         pageSize: 4,
