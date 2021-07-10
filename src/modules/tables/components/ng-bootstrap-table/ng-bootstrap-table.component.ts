@@ -24,7 +24,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class NgBootstrapTableComponent implements OnInit {
     @Input() pageSize =20;
-
+    page: number = 1;
     product$!: Observable<Product[]>;
     total$!: Observable<number>;
     sortedColumn!: string;
@@ -57,6 +57,7 @@ export class NgBootstrapTableComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.modeleService.getModeles();
         this.modeleService.pageSize = this.pageSize;
         this.product$ = this.modeleService.product;
         this.total$ = this.modeleService.total$;
@@ -105,32 +106,46 @@ export class NgBootstrapTableComponent implements OnInit {
         }
     }
     onSelect(event: { addedFiles: any; }) {
+        console.log(...event.addedFiles)
         this.files?.push(...event.addedFiles);
         if (this.files) {
-            const file: File | null = this.files[0];
-            if (file) {
-                this.currentFile = file;
-                this.modeleService.upload(this.currentFile).subscribe(
-                    (event: any) => {
-                        if (event instanceof HttpResponse) {
-                            let product = {data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
-                            this.modeleService.createProduct(product).subscribe(e=>{
-                                this.modeleService.getModeles()
-                            })
-                            this.message = event.body.message;
-                            this.fileInfos = this.modeleService.getFiles();
-                        }
-                    },
-                    (err: any) => {
-                        if (err.error && err.error.message) {
-                            this.message = err.error.message;
-                        } else {
-                            this.message = 'Could not upload the file!';
-                        }
-                        this.currentFile = undefined;
-                    });
-            }
-            this.selectedFiles = undefined;
+            this.files.map(
+                f=>{
+                    const file: File | null = f;
+                    if (file) {
+                        this.currentFile = file;
+                        this.modeleService.upload(this.currentFile).subscribe(
+                            (event: any) => {
+                                console.log(event)
+                               /* if (event.ok){
+                                    let product = {data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
+                                    this.modeleService.createProduct(product).subscribe(e=>{
+                                        this.modeleService.getModeles()
+                                    })
+                                }*/
+                               if (event instanceof HttpResponse) {
+                                    console.log(event.body)
+                                    let product = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
+                                    this.modeleService.createProduct(product).subscribe(e=>{
+                                        this.modeleService.getModeles()
+                                    })
+                                    this.message = event.body.message;
+                                    this.fileInfos = this.modeleService.getFiles();
+                                }
+                            },
+                            (err: any) => {
+                                if (err.error && err.error.message) {
+                                    this.message = err.error.message;
+                                } else {
+                                    this.message = 'Could not upload the file!';
+                                }
+                                this.currentFile = undefined;
+                            });
+                    }
+                    this.selectedFiles = undefined;
+                }
+            )
+
         }
     }
 

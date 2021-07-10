@@ -48,7 +48,7 @@ export class CountryService {
     private _search$ = new Subject<void>();
     private _product$ = new BehaviorSubject<Product[]>([]);
     private _total$ = new BehaviorSubject<number>(0);
-    private baseUrl = 'https://myafricanstyle.herokuapp.com/';
+    private baseUrl = 'https://myafricanstyle.herokuapp.com';
     private _state: State = {
         page: 1,
         pageSize: 4,
@@ -113,7 +113,7 @@ export class CountryService {
         return of({ product, total });
     }
 
-    upload(file: File) {
+    upload(file: File):Observable<HttpEvent<any>>{
         const formData: FormData = new FormData();
         formData.append('file', file);
         const req = new HttpRequest('POST', `${this.baseUrl}/upload`, formData, {
@@ -127,7 +127,7 @@ export class CountryService {
         return this.http.get(`${this.baseUrl}/files`);
     }
 
-    createProduct(product: { note: number; categorie: any; data: any; vues: number }) {
+    createProduct(product: any) {
         return this.http.post(`${this.baseUrl}/product`, product, {responseType: 'json'})
     }
     getModeles(){

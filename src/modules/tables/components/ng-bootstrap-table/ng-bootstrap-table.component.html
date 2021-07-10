@@ -20,8 +20,12 @@
         </thead>
         <tbody>
             <tr *ngFor="let product of product$ | async">
-                <td><img class="mr-2" [src]="sanitize('data:image/jpeg;base64,'+product['data'])"
-                         style="width: 100px" /><ngb-highlight></ngb-highlight></td>
+                <td>
+                    <img class="mr-2" [src]="product['url']"
+                         style="width: 100px" />
+                         <ngb-highlight></ngb-highlight>
+
+                        </td>
                 <td><img class="mr-2" style="width: 20px" /><ngb-highlight [result]="product.categorie" [term]="modeleService.searchTerm"></ngb-highlight></td>
                 <td><ngb-highlight [result]="product.vues | number" [term]="modeleService.searchTerm"></ngb-highlight></td>
                 <td><ngb-highlight [result]="product.note | number" [term]="modeleService.searchTerm"></ngb-highlight></td>
