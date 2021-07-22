@@ -1,6 +1,6 @@
 <form>
-    <div class="form-group form-inline">Recherche <input class="form-control mr-5" type="text" name="searchTerm" [(ngModel)]="modeleService.searchTerm" />
-        <span class="mr-10" *ngIf="modeleService.loading$ | async">Loading...</span>
+    <div class="form-group form-inline">Recherche <input class="form-control mr-5" type="text" name="searchTerm" [(ngModel)]="productService.searchTerm" />
+        <span class="mr-10" *ngIf="productService.loading$ | async">Loading...</span>
         <button type="button"
                 class="btn btn-success mr-1" (click)="import(content)">
             <i class="fa fa-upload"></i>
@@ -24,11 +24,10 @@
                     <img class="mr-2" [src]="product['url']"
                          style="width: 100px" />
                          <ngb-highlight></ngb-highlight>
-
                         </td>
-                <td><img class="mr-2" style="width: 20px" /><ngb-highlight [result]="product.categorie" [term]="modeleService.searchTerm"></ngb-highlight></td>
-                <td><ngb-highlight [result]="product.vues | number" [term]="modeleService.searchTerm"></ngb-highlight></td>
-                <td><ngb-highlight [result]="product.note | number" [term]="modeleService.searchTerm"></ngb-highlight></td>
+                <td><img class="mr-2" style="width: 20px" /><ngb-highlight [result]="product.categorie" [term]="productService.searchTerm"></ngb-highlight></td>
+                <td><ngb-highlight [result]="product.vues | number" [term]="productService.searchTerm"></ngb-highlight></td>
+                <td><ngb-highlight [result]="product.note | number" [term]="productService.searchTerm"></ngb-highlight></td>
                 <button class="btn btn-light btn-sm" ngbDropdownItem
                         (click)="deleteProductModal(deleteModal,product)">
                     <i class="fa fa-trash" aria-hidden="true"></i>
@@ -37,8 +36,8 @@
         </tbody>
     </table>
     <div class="d-flex justify-content-between p-2">
-        <ngb-pagination [collectionSize]="total$ | async" [(page)]="modeleService.page" [pageSize]="modeleService.pageSize"></ngb-pagination
-        ><select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="modeleService.pageSize">
+        <ngb-pagination [collectionSize]="total$ | async" [(page)]="productService.page" [pageSize]="productService.pageSize"></ngb-pagination
+        ><select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="productService.pageSize">
             <option [ngValue]="2">2 items per page</option>
             <option [ngValue]="4">4 items per page</option>
             <option [ngValue]="6">6 items per page</option>
@@ -90,7 +89,7 @@
                 </ng-multiselect-dropdown>
             </div>
         </div>
-        <ngx-dropzone (change)="onSelect($event)">
+        <ngx-dropzone (change)="onSelectImage($event)">
             <ngx-dropzone-label>Importer les photo ici</ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
                 <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
@@ -99,7 +98,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="closeMe()">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeMe()">Validez</button>
     </div>
 
 </ng-template>

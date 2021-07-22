@@ -1,8 +1,8 @@
 import { DecimalPipe } from '@angular/common';
 import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 import { Injectable, PipeTransform } from '@angular/core';
-import { SortDirection } from '@modules/tables/directives';
-import { Product} from '@modules/tables/models';
+import { SortDirection } from '@modules/products/directives';
+import {Product, Video} from '@modules/products/models';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { debounceTime, delay, switchMap, tap } from 'rxjs/operators';
 
@@ -10,6 +10,7 @@ interface SearchResult {
     product: Product[];
     total: number;
 }
+
 
 interface State {
     page: number;
@@ -36,19 +37,21 @@ function sort(product: any[], column: string, direction: string): Product[] {
 
 function matches(product: Product, term: string, pipe: PipeTransform) {
     return (
-        product.categorie.toLowerCase().includes(term.toLowerCase()) ||
+        product?.categorie?.toLowerCase().includes(term?.toLowerCase()) ||
         pipe.transform(product.vues).includes(term) ||
         pipe.transform(product.note).includes(term)
     );
 }
 
 @Injectable({ providedIn: 'root' })
-export class CountryService {
+export class ProductService {
     private _loading$ = new BehaviorSubject<boolean>(true);
     private _search$ = new Subject<void>();
     private _product$ = new BehaviorSubject<Product[]>([]);
+    private _video$ = new BehaviorSubject<Video[]>([]);
+
     private _total$ = new BehaviorSubject<number>(0);
-    private baseUrl = 'https://myafricanstyle.herokuapp.com';
+    private baseUrl = 'http://localhost:8080';
     private _state: State = {
         page: 1,
         pageSize: 4,
@@ -58,11 +61,14 @@ export class CountryService {
     };
 
     constructor(private pipe: DecimalPipe,private http: HttpClient) {
-       this.getModeles()
+       this.getProduct()
     }
 
     get product() {
         return this._product$.asObservable();
+    }
+    get video() {
+        return this._video$.asObservable();
     }
     get total$() {
         return this._total$.asObservable();
@@ -130,7 +136,10 @@ export class CountryService {
     createProduct(product: any) {
         return this.http.post(`${this.baseUrl}/product`, product, {responseType: 'json'})
     }
-    getModeles(){
+    createVideo(product: any) {
+        return this.http.post(`${this.baseUrl}/video`, product, {responseType: 'json'})
+    }
+    getProduct(){
         return this.http.get(`${this.baseUrl}/product`, { responseType: 'json' }).subscribe(
             (product:any)=>{
                 this._product$.next(product);
@@ -152,10 +161,32 @@ export class CountryService {
             }
         );
     }
+    getVideo(){
+        return this.http.get(`${this.baseUrl}/video`, { responseType: 'json' }).subscribe(
+            (video:any)=>{
+                this._video$.next(video);
+                this._total$.next(video.length)
+                this._search$
+                    .pipe(
+                        tap(() => this._loading$.next(true)),
+                        debounceTime(120),
+                        switchMap(() => this._search(video)),
+                        delay(120),
+                        tap(() => this._loading$.next(false))
+                    )
+                    .subscribe(result => {
+                       // this._product$.next(result.video);
+                        this._total$.next(result.total);
+                    });
+
+                this._search$.next();
+            }
+        );
+    }
 
     deleteProduct(id: string | undefined){
         return this.http.delete(`${this.baseUrl}/product/`+id, { responseType: 'json' }).subscribe(
-            ()=> this.getModeles()
+            ()=> this.getProduct()
         );
     }
 }

@@ -9,23 +9,24 @@ import {
     ViewChildren,
 } from '@angular/core';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import { SBSortableHeaderDirective, SortEvent } from '@modules/tables/directives';
-import {Product} from '@modules/tables/models';
-import { CountryService } from '@modules/tables/services';
+import { SBSortableHeaderDirective, SortEvent } from '@modules/products/directives';
+import {Product, Video} from '@modules/products/models';
+import { ProductService } from '@modules/products/services';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-    selector: 'sb-ng-bootstrap-table',
+    selector: 'video-table',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    templateUrl: './ng-bootstrap-table.component.html',
-    styleUrls: ['ng-bootstrap-table.component.scss'],
+    templateUrl: './video-table.component.html',
+    styleUrls: ['video-table.component.scss'],
 })
-export class NgBootstrapTableComponent implements OnInit {
+export class VideoTableComponent implements OnInit {
     @Input() pageSize =20;
     page: number = 1;
-    product$!: Observable<Product[]>;
+    //product$!: Observable<Product[]>;
+    video$!: Observable<Video[]>;
     total$!: Observable<number>;
     sortedColumn!: string;
     sortedDirection!: string;
@@ -42,12 +43,13 @@ export class NgBootstrapTableComponent implements OnInit {
     message = '';
     fileInfos?: Observable<any>;
     private productId: any;
+    private videoId: any;
     private updateProductForm: any;
 
     constructor(private sanitizer: DomSanitizer,
         private modalService: NgbModal,
         private fb:FormBuilder,
-        public modeleService: CountryService,
+        public productService: ProductService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
         this.updateProductForm = this.fb.group({
@@ -57,16 +59,19 @@ export class NgBootstrapTableComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.modeleService.getModeles();
-        this.modeleService.pageSize = this.pageSize;
-        this.product$ = this.modeleService.product;
-        this.total$ = this.modeleService.total$;
+        this.productService.getProduct();
+        this.productService.getVideo();
+
+        this.productService.pageSize = this.pageSize;
+        this.video$ = this.productService.video;
+        this.total$ = this.productService.total$;
 
         this.dropdownList = [
             { categorie_id: 1, categorie: 'Homme' },
             { categorie_id: 2, categorie: 'Femme' },
             { categorie_id: 3, categorie: 'Couple' },
             { categorie_id: 4, categorie: 'Enfant' },
+            { categorie_id: 5, categorie: 'Video' },
         ];
         this.dropdownSettings = {
             singleSelection: true,
@@ -82,8 +87,8 @@ export class NgBootstrapTableComponent implements OnInit {
     onSort({ column, direction }: SortEvent) {
         this.sortedColumn = column;
         this.sortedDirection = direction;
-        this.modeleService.sortColumn = column;
-        this.modeleService.sortDirection = direction;
+        this.productService.sortColumn = column;
+        this.productService.sortDirection = direction;
         this.changeDetectorRef.detectChanges();
     }
     import(content: any) {
@@ -114,7 +119,7 @@ export class NgBootstrapTableComponent implements OnInit {
                     const file: File | null = f;
                     if (file) {
                         this.currentFile = file;
-                        this.modeleService.upload(this.currentFile).subscribe(
+                        this.productService.upload(this.currentFile).subscribe(
                             (event: any) => {
                                 console.log(event)
                                /* if (event.ok){
@@ -125,12 +130,12 @@ export class NgBootstrapTableComponent implements OnInit {
                                 }*/
                                if (event instanceof HttpResponse) {
                                     console.log(event.body)
-                                    let product = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
-                                    this.modeleService.createProduct(product).subscribe(e=>{
-                                        this.modeleService.getModeles()
+                                    let video = {url:"http://localhost:8080/files/"+event.body.id}
+                                    this.productService.createVideo(video).subscribe(e=>{
+                                        this.productService.getVideo()
                                     })
                                     this.message = event.body.message;
-                                    this.fileInfos = this.modeleService.getFiles();
+                                    this.fileInfos = this.productService.getFiles();
                                 }
                             },
                             (err: any) => {
@@ -167,16 +172,14 @@ export class NgBootstrapTableComponent implements OnInit {
 
     deleteProduct() {
         this.modalService.dismissAll();
-        this.modeleService.deleteProduct(this.productId)
+        this.productService.deleteProduct(this.productId)
     }
 
-    editProduct(product: Product) {
-
-    }
+    editProduct(product: Product) {}
 
     deleteProductModal(targetModal: any, product: any) {
-        this.productId = product.productId
-        console.log(this.productId)
+        this.videoId = product.videoId
+        console.log(this.videoId)
         this.modalService.open(targetModal, {
             centered: true,
             backdrop: 'static'

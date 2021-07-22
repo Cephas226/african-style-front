@@ -5,3 +5,8 @@ export interface Product {
     vues: number;
     note: string;
 }
+
+export interface Video {
+    videoId: number;
+    url: string;
+}

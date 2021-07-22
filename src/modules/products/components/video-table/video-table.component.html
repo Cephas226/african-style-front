@@ -1,0 +1,84 @@
+<form>
+    <div class="form-group form-inline">Recherche <input class="form-control mr-5" type="text" name="searchTerm" [(ngModel)]="productService.searchTerm" />
+        <span class="mr-10" *ngIf="productService.loading$ | async">Loading...</span>
+        <button type="button"
+                class="btn btn-success mr-1" (click)="import(content)">
+            <i class="fa fa-upload"></i>
+            Importez
+        </button>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Video</th>
+                <th scope="col" sbSortable="population" (sort)="onSort($event)"><span>Actions</span><sb-sort-icon *ngIf='sortedColumn === "population"' [direction]="sortedDirection"></sb-sort-icon></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let video of video$ | async">
+                <td>
+                    <video poster="https://firebasestorage.googleapis.com/v0/b/africanstyle-15779.appspot.com/o/logo.png?alt=media&token=e725aeaa-b832-42b4-a485-0c2bd48ae652" id="my_video_1" class="video-js vjs-default-skin" width="240px" height="240px" controls preload="none">
+                        <source [src]="video['url']"/>
+                    </video>
+                         <ngb-highlight></ngb-highlight>
+                        </td>
+                <button class="btn btn-light btn-sm" ngbDropdownItem
+                        (click)="deleteProductModal(deleteModal,video)">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+            </tr>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="total$ | async" [(page)]="productService.page" [pageSize]="productService.pageSize"></ngb-pagination
+        ><select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="productService.pageSize">
+            <option [ngValue]="2">2 items per page</option>
+            <option [ngValue]="4">4 items per page</option>
+            <option [ngValue]="6">6 items per page</option>
+        </select>
+    </div>
+</form>
+
+<ng-template #deleteModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Student deletion</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            If you want to delete this student, please click on "Confirm" !
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annulez</button>
+        <button type="submit" class="btn btn-primary" (click)="deleteProduct()">Confirmez</button>
+    </div>
+
+
+</ng-template>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="closeMe()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <ngx-dropzone (change)="onSelect($event)">
+            <ngx-dropzone-label>Importer les vidéos ici</ngx-dropzone-label>
+            <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-preview>
+        </ngx-dropzone>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="closeMe()">Validez</button>
+    </div>
+
+</ng-template>

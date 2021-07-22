@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
     selector: 'sb-tables',
@@ -7,6 +8,12 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
     styleUrls: ['tables.component.scss'],
 })
 export class TablesComponent implements OnInit {
-    constructor() {}
-    ngOnInit() {}
+    private isImage?: boolean;
+
+    constructor(private route:Router) {
+
+    }
+    ngOnInit() {
+        this.route.url.includes("image")? this.isImage=true: this.isImage=false;
+    }
 }
