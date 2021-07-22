@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import { SBSortableHeaderDirective, SortEvent } from '@modules/products/directives';
-import {Product, Video} from '@modules/products/models';
+import { Video} from '@modules/products/models';
 import { ProductService } from '@modules/products/services';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -25,7 +25,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class VideoTableComponent implements OnInit {
     @Input() pageSize =20;
     page: number = 1;
-    //product$!: Observable<Product[]>;
     video$!: Observable<Video[]>;
     total$!: Observable<number>;
     sortedColumn!: string;
@@ -45,6 +44,7 @@ export class VideoTableComponent implements OnInit {
     private productId: any;
     private videoId: any;
     private updateProductForm: any;
+    private progress=0;
 
     constructor(private sanitizer: DomSanitizer,
         private modalService: NgbModal,
@@ -128,7 +128,9 @@ export class VideoTableComponent implements OnInit {
                                         this.modeleService.getModeles()
                                     })
                                 }*/
-                               if (event instanceof HttpResponse) {
+                                if (event.type === HttpEventType.UploadProgress) {
+                                    this.progress = Math.round(100 * event.loaded / event.total);
+                                } else if (event instanceof HttpResponse) {
                                     console.log(event.body)
                                     let video = {url:"http://localhost:8080/files/"+event.body.id}
                                     this.productService.createVideo(video).subscribe(e=>{
@@ -170,15 +172,15 @@ export class VideoTableComponent implements OnInit {
         this.files = [];
     }
 
-    deleteProduct() {
+    deleteVideo() {
         this.modalService.dismissAll();
-        this.productService.deleteProduct(this.productId)
+        this.productService.deleteVideo(this.videoId)
     }
 
-    editProduct(product: Product) {}
+    editVideo(video: Video) {}
 
-    deleteProductModal(targetModal: any, product: any) {
-        this.videoId = product.videoId
+    deleteVideoModal(targetModal: any, video: any) {
+        this.videoId = video.videoId
         console.log(this.videoId)
         this.modalService.open(targetModal, {
             centered: true,

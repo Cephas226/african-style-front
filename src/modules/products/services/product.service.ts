@@ -51,7 +51,7 @@ export class ProductService {
     private _video$ = new BehaviorSubject<Video[]>([]);
 
     private _total$ = new BehaviorSubject<number>(0);
-    private baseUrl = 'http://localhost:8080';
+    private baseUrl = 'https://myafricanstyle.herokuapp.com';
     private _state: State = {
         page: 1,
         pageSize: 4,
@@ -136,9 +136,6 @@ export class ProductService {
     createProduct(product: any) {
         return this.http.post(`${this.baseUrl}/product`, product, {responseType: 'json'})
     }
-    createVideo(product: any) {
-        return this.http.post(`${this.baseUrl}/video`, product, {responseType: 'json'})
-    }
     getProduct(){
         return this.http.get(`${this.baseUrl}/product`, { responseType: 'json' }).subscribe(
             (product:any)=>{
@@ -161,7 +158,13 @@ export class ProductService {
             }
         );
     }
-    getVideo(){
+
+    deleteProduct(id: string | undefined){
+        return this.http.delete(`${this.baseUrl}/product/`+id, { responseType: 'json' }).subscribe(
+            ()=> this.getProduct()
+        );
+    }
+    getVideo()      {
         return this.http.get(`${this.baseUrl}/video`, { responseType: 'json' }).subscribe(
             (video:any)=>{
                 this._video$.next(video);
@@ -175,7 +178,7 @@ export class ProductService {
                         tap(() => this._loading$.next(false))
                     )
                     .subscribe(result => {
-                       // this._product$.next(result.video);
+                        // this._product$.next(result.video);
                         this._total$.next(result.total);
                     });
 
@@ -183,10 +186,12 @@ export class ProductService {
             }
         );
     }
-
-    deleteProduct(id: string | undefined){
-        return this.http.delete(`${this.baseUrl}/product/`+id, { responseType: 'json' }).subscribe(
-            ()=> this.getProduct()
+    createVideo(product: any) {
+        return this.http.post(`${this.baseUrl}/video`, product, {responseType: 'json'})
+    }
+    deleteVideo(id: string | undefined){
+        return this.http.delete(`${this.baseUrl}/video/`+id, { responseType: 'json' }).subscribe(
+            ()=> this.getVideo()
         );
     }
 }

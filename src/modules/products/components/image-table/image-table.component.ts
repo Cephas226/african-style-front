@@ -43,6 +43,7 @@ export class ImageTableComponent implements OnInit {
     fileInfos?: Observable<any>;
     private productId: any;
     private updateProductForm: any;
+    private progress=0;
 
     constructor(private sanitizer: DomSanitizer,
         private modalService: NgbModal,
@@ -107,6 +108,7 @@ export class ImageTableComponent implements OnInit {
     }
     onSelectImage(event: { addedFiles: any; }) {
         console.log(...event.addedFiles)
+        this.progress = 0;
         this.files?.push(...event.addedFiles);
         if (this.files) {
             this.files.map(
@@ -117,9 +119,11 @@ export class ImageTableComponent implements OnInit {
                         this.productService.upload(this.currentFile).subscribe(
                             (event: any) => {
                                 console.log(event)
-                               if (event instanceof HttpResponse) {
+                                if (event.type === HttpEventType.UploadProgress) {
+                                    this.progress = Math.round(100 * event.loaded / event.total);
+                                } else if (event instanceof HttpResponse) {
                                     console.log(event.body)
-                                    let product = {url:"http://localhost:8080/files/"+event.body.id,data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
+                                    let product = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
                                     this.productService.createProduct(product).subscribe(e=>{
                                         this.productService.getProduct()
                                     })
