@@ -6,6 +6,7 @@
             <i class="fa fa-upload"></i>
             Importez
         </button>
+        <span class="mr-10">{{(video$ | async)?.length}} Video chargées</span>
     </div>
     <div *ngIf="currentFile" class="progress my-3">
         <div
@@ -23,18 +24,18 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">Nom</th>
                 <th scope="col">Video</th>
-                <th scope="col" sbSortable="population" (sort)="onSort($event)"><span>Actions</span><sb-sort-icon *ngIf='sortedColumn === "population"' [direction]="sortedDirection"></sb-sort-icon></th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let video of video$ | async">
+                <td><ngb-highlight [result]="video.nom"></ngb-highlight></td>
                 <td>
                     <video poster="https://firebasestorage.googleapis.com/v0/b/africanstyle-15779.appspot.com/o/logo.png?alt=media&token=e725aeaa-b832-42b4-a485-0c2bd48ae652" id="my_video_1" class="video-js vjs-default-skin" width="240px" height="240px" controls preload="none">
-                        <source [src]="video['url']"/>
-                    </video>
-                         <ngb-highlight></ngb-highlight>
-                        </td>
+                        <source [src]="video['url']"/> </video>
+                </td>
                 <button class="btn btn-light btn-sm" ngbDropdownItem
                         (click)="deleteVideoModal(deleteModal,video)">
                     <i class="fa fa-trash" aria-hidden="true"></i>

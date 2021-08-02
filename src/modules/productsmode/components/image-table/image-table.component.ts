@@ -123,7 +123,7 @@ export class ImageTableComponent implements OnInit {
                                     this.progress = Math.round(100 * event.loaded / event.total);
                                 } else if (event instanceof HttpResponse) {
                                     console.log(event.body)
-                                    let product = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,data:event.body.data,categorie: this.selectedItems[0]["categorie"],vues:10,note:3}
+                                    let product = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,categorie: this.selectedItems[0]["categorie"],vues:Math.floor(Math.random() * 500),note:Math.floor(Math.random() * 5)}
                                     this.productService.createProduct(product).subscribe(e=>{
                                         this.productService.getProduct()
                                     })
@@ -172,6 +172,7 @@ export class ImageTableComponent implements OnInit {
 
     }
 
+
     deleteProductModal(targetModal: any, product: any) {
         this.productId = product.productId
         console.log(this.productId)
@@ -180,4 +181,5 @@ export class ImageTableComponent implements OnInit {
             backdrop: 'static'
         });
     }
+
 }

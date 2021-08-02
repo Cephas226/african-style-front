@@ -1,0 +1,15 @@
+<sb-layout-dashboard
+    ><sb-dashboard-head title="Tables" [hideBreadcrumbs]="false"></sb-dashboard-head
+    >
+    <sb-card>
+        ><div class="card-header"><fa-icon class="mr-1" [icon]='["fas", "table"]'></fa-icon>Tableau d'administration</div>
+        <div class="card-body" *ngIf="isImage,else videoBlock">
+            <image-table [pageSize]="6"></image-table>
+        </div>
+    </sb-card>
+</sb-layout-dashboard>
+<ng-template #videoBlock>
+    <div class="card-body">
+        <video-table [pageSize]="6"></video-table>
+    </div>
+</ng-template>

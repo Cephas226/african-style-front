@@ -132,7 +132,7 @@ export class VideoTableComponent implements OnInit {
                                     this.progress = Math.round(100 * event.loaded / event.total);
                                 } else if (event instanceof HttpResponse) {
                                     console.log(event.body)
-                                    let video = {url:"http://localhost:8080/files/"+event.body.id}
+                                    let video = {url:"https://myafricanstyle.herokuapp.com/files/"+event.body.id,nom:event.body.name}
                                     this.productService.createVideo(video).subscribe(e=>{
                                         this.productService.getVideo()
                                     })

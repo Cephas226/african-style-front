@@ -9,4 +9,5 @@ export interface Product {
 export interface Video {
     videoId: number;
     url: string;
+    nom:string
 }
